@@ -1,6 +1,23 @@
+/*
+Copyright 2018 Embedded Microprocessor Benchmark Consortium (EEMBC)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Original Author: Shay Gal-on
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include "coremark.h"
 #if CALLGRIND_RUN
 #include <valgrind/callgrind.h>
@@ -400,60 +417,7 @@ core_stop_parallel(core_results *res)
     return 1;
 }
 #else /* no standard multicore implementation */
-#define MAX_THREADS MULTITHREAD
-
-// 定义线程数组和工作队列屏障
-static pthread_t threads[MAX_THREADS];
-static pthread_barrier_t barrier;
-
-// 线程函数，运行 CoreMark 工作负载
-void *core_thread_func(void *arg) {
-    core_results *res = (core_results *)arg;
-
-    // 等待所有线程启动
-    pthread_barrier_wait(&barrier);
-
-    // 执行 CoreMark 的 workload
-    res->iterations = core_benchmarks(res);
-
-    return NULL;
-}
-
-// 实现 core_start_parallel 函数，启动多线程
-ee_u8 core_start_parallel(core_results *res) {
-    // 初始化线程屏障
-    if (pthread_barrier_init(&barrier, NULL, MULTITHREAD) != 0) {
-        ee_printf("Failed to initialize barrier\n");
-        return 0;
-    }
-
-    // 创建线程
-    for (int i = 0; i < MULTITHREAD; i++) {
-        if (pthread_create(&threads[i], NULL, core_thread_func, &res[i]) != 0) {
-            ee_printf("Failed to create thread %d\n", i);
-            return 0;
-        }
-    }
-
-    return 1; // 返回成功
-}
-
-// 实现 core_stop_parallel 函数，停止线程并收集结果
-ee_u8 core_stop_parallel(core_results *res) {
-    for (int i = 0; i < MULTITHREAD; i++) {
-        if (pthread_join(threads[i], NULL) != 0) {
-            ee_printf("Failed to join thread %d\n", i);
-            return 0;
-        }
-    }
-
-    // 销毁屏障
-    if (pthread_barrier_destroy(&barrier) != 0) {
-        ee_printf("Failed to destroy barrier\n");
-        return 0;
-    }
-
-    return 1; // 返回成功
-}
+#error \
+    "Please implement multicore functionality in core_portme.c to use multiple contexts."
 #endif /* multithread implementations */
 #endif

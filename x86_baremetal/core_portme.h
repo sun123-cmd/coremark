@@ -163,7 +163,7 @@ typedef size_t         ee_size_t;
    and <core_end_parallel> in <core_portme.c>, to fit a particular architecture.
 */
 #ifndef MULTITHREAD
-#define MULTITHREAD 2
+#define MULTITHREAD 1
 #endif
 
 /* Configuration: USE_PTHREAD
@@ -179,7 +179,7 @@ typedef size_t         ee_size_t;
    greater then 1.
 */
 #ifndef USE_PTHREAD
-#define USE_PTHREAD 1
+#define USE_PTHREAD 0
 #endif
 
 /* Configuration: USE_FORK

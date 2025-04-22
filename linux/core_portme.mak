@@ -15,3 +15,5 @@
 # Original Author: Shay Gal-on
 
 include posix/core_portme.mak
+
+# CFLAGS = -O2 -DHAS_FLOAT -DUSE_FLOAT -DMULTITHREAD=1 -DUSE_PTHREAD？
